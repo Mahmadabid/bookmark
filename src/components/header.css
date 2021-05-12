@@ -1,0 +1,12 @@
+.body {
+    background-color: hsl(226, 23%, 11%);
+    color: white;
+}
+
+.day {
+    background-image: linear-gradient(to right, #3072be , #62dba6);
+}
+
+.dark {
+    background-image: linear-gradient(to right, #1d3a58, #192532, #1d3a58);
+}

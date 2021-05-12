@@ -1,0 +1,58 @@
+{
+  "name": "gatsby-typescript-starter",
+  "private": true,
+  "description": "Gatsby with typescript, material-ui, dotenv and redux toolkit (Dark Theme)",
+  "version": "0.1.0",
+  "author": "Ahmad",
+  "dependencies": {
+    "@contentful/rich-text-react-renderer": "^14.1.3",
+    "@material-ui/core": "^4.11.3",
+    "@material-ui/icons": "^4.11.2",
+    "@reduxjs/toolkit": "^1.5.1",
+    "@types/react": "^17.0.3",
+    "@types/react-dom": "^17.0.3",
+    "@types/react-redux": "^7.1.16",
+    "@typescript-eslint/eslint-plugin": "^4.22.0",
+    "@typescript-eslint/parser": "^4.22.0",
+    "dotenv": "^8.2.0",
+    "gatsby": "^3.3.0",
+    "gatsby-plugin-gatsby-cloud": "^2.2.0",
+    "gatsby-plugin-image": "^1.2.1",
+    "gatsby-plugin-manifest": "^3.2.0",
+    "gatsby-plugin-material-ui": "^3.0.1",
+    "gatsby-plugin-offline": "^4.2.0",
+    "gatsby-plugin-react-helmet": "^4.2.0",
+    "gatsby-plugin-sharp": "^3.2.1",
+    "gatsby-source-filesystem": "^3.2.0",
+    "gatsby-transformer-sharp": "^3.2.0",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "react-helmet": "^6.1.0",
+    "react-redux": "^7.2.3",
+    "typescript": "^4.2.4"
+  },
+  "devDependencies": {
+    "@types/react-helmet": "^6.1.1",
+    "prettier": "2.2.1"
+  },
+  "keywords": [
+    "gatsby"
+  ],
+  "license": "0BSD",
+  "scripts": {
+    "build": "gatsby build",
+    "develop": "gatsby develop",
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
+    "start": "npm run develop",
+    "serve": "gatsby serve",
+    "clean": "gatsby clean",
+    "test": "echo \"Write tests! -> https://gatsby.dev/unit-testing\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Mahmedabid/typescript-template-gatsby"
+  },
+  "bugs": {
+    "url": "https://github.com/gatsbyjs/gatsby/issues"
+  }
+}

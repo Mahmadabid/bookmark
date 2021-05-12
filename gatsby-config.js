@@ -21,8 +21,6 @@ module.exports = {
     },
     `gatsby-transformer-sharp`,
     `gatsby-plugin-sharp`,
-    `@contentful/rich-text-react-renderer`,
-    `gatsby-plugin-typescript`,
     {
       resolve: `gatsby-plugin-manifest`,
       options: {

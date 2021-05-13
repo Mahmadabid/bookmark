@@ -8,6 +8,7 @@ body {
     justify-content: center;
     align-items: center;
     margin-top: 30px;
+    flex-direction: column;
 }
 
 h3, h1 {

@@ -66,7 +66,7 @@ interface Info {
   url: string
 }
 
-const BookmarkList= () => {
+const BookmarkList = () => {
   const classes = useStyles();
   const { loading, error, data } = useQuery(GET_BOOKMARK);
   const islit = useSelector((state: State) => state.themes.value);
@@ -131,8 +131,9 @@ const BookmarkList= () => {
           null}
         <form onSubmit={AddTask}>
           <div className="main">
-          <TextField className={classes.input} error={Error} helperText={Error ? 'Empty field!' : ' '} onChange={(e) => setName(e.target.value)} value={Name} id="outlined-basic" label="Add Name" variant="outlined" />
-          <TextField className={classes.input} error={Error} helperText={Error ? 'Empty field!' : ' '} onChange={(e) => setUrl(e.target.value)} value={Url} id="outlined-basic" label="Add Url" variant="outlined" />
+            <TextField className={classes.input} error={Error} helperText={Error ? 'Empty field!' : ' '} onChange={(e) => setName(e.target.value)} value={Name} id="outlined-basic" label="Add Name" variant="outlined" />
+            <TextField className={classes.input} error={Error} helperText={Error ? 'Empty field!' : ' '} onChange={(e) => setUrl(e.target.value)} value={Url} id="outlined-basic" label="Add Url" variant="outlined" />
+            <br />
             <Button type="submit" className={`button ${classes.button}`} variant="contained" color="primary">ADD Bookmark</Button>
           </div>
         </form>

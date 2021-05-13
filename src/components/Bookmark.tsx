@@ -20,7 +20,7 @@ import { GET_BOOKMARK } from './BookmarkList';
 interface BookmarkProps {
     name: string
     id: string
-    url: String
+    url: string
     setEditLoading: Dispatch<SetStateAction<boolean>>
     setDelLoading: Dispatch<SetStateAction<boolean>>
 }
@@ -143,7 +143,7 @@ const Bookmark: React.FC<BookmarkProps> = ({ setDelLoading, setEditLoading, name
 
     return (
         <ListItem>
-            <a href={'string'} target="blank">
+            <a href={url} target="blank">
                 <IconButton color="inherit">
                     <LinkIcon />
                 </IconButton>

@@ -33,7 +33,7 @@ const index = () => {
       <SEO title="Home" />
       <div style={{ display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
         <h1>Welcome {user.user_metadata.full_name}</h1>
-        <Link to="/todo" style={{ textDecoration: 'none' }} >
+        <Link to="/bookmark" style={{ textDecoration: 'none' }} >
           <Button color="primary" variant="contained">Create Todo</Button>
         </Link>
       </div>

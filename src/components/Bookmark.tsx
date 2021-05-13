@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useState } from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
 import { IconButton, ListItem, ListItemText } from '@material-ui/core';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
@@ -44,7 +44,7 @@ const EDIT_BOOKMARK = gql`
 
 const Bookmark: React.FC<BookmarkProps> = ({ setDelLoading, setEditLoading, name, id, url }) => {
 
-    const [open, setOpen] = useState(false);
+    // const [open, setOpen] = useState(false);
     // const [NameError, setNameError] = useState(false);
     // const [UrlError, setUrlError] = useState(false);
 

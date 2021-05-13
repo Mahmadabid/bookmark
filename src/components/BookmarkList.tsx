@@ -1,6 +1,6 @@
 import React, { useState } from "react"
-import Layout from "../components/layout"
-import SEO from "../components/seo"
+import Layout from "./layout"
+import SEO from "./seo"
 import { useQuery, useMutation } from '@apollo/client';
 import gql from 'graphql-tag';
 import { Button, List, useMediaQuery } from "@material-ui/core";
@@ -9,7 +9,7 @@ import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { useSelector } from "react-redux";
 import { State } from "../Global/Types/SliceTypes";
 import CircularProgress from '@material-ui/core/CircularProgress';
-import Task from "../components/Task";
+import Bookmark from "./Bookmark";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -41,42 +41,40 @@ const useStyles = makeStyles((theme: Theme) =>
 
 
 // This query is executed at run time by Apollo.
-export const GET_TODO = gql`
+export const GET_BOOKMARK = gql`
 {
-  todos {
-    task,
-    status,
+  bookmarks {
+    name,
     id,
-    date,
+    url,
   }
 }
 `;
 
-const ADD_TODO = gql`
-  mutation addTodo($task: String!) {
-    addTodo(task: $task) {
-      task
+const ADD_BOOKMARK = gql`
+  mutation addBookmark($name: String!, $url: String) {
+    addBookmark(name: $name, url: $url) {
+      name,
+      url
     }
   }
 `;
 
 interface Info {
   id: string
-  status: boolean
-  task: string
-  date: string
+  name: string
+  url: string
 }
 
 const TaskBox= () => {
   const classes = useStyles();
-  const { loading, error, data } = useQuery(GET_TODO);
+  const { loading, error, data } = useQuery(GET_BOOKMARK);
   const islit = useSelector((state: State) => state.themes.value);
   const matches = useMediaQuery('(max-width:380px)');
   const [value, setValue] = useState("");
-  const [AddTodo, { loading: AddLoading }] = useMutation(ADD_TODO);
-  const [CheckLoading, setCheckLoading] = useState(false);
+  const [AddBookmark, { loading: AddLoading }] = useMutation(ADD_BOOKMARK);
   const [DelLoading, setDelLoading] = useState(false);
-  const [UpdateLoading, setUpdateLoading] = useState(false);
+  const [EditLoading, setEditLoading] = useState(false);
   const [Error, setError] = useState(false);
 
   const AddTask = (event: React.FormEvent) => {
@@ -84,11 +82,11 @@ const TaskBox= () => {
     if (value === "") {
       setError(true);
     } else {
-      AddTodo({
+      AddBookmark({
         variables: {
           task: value
         },
-        refetchQueries: [{ query: GET_TODO }]
+        // refetchQueries: [{ query: GET_TODO }]
       })
       setValue('');
     }
@@ -124,7 +122,7 @@ const TaskBox= () => {
     return (
       <Layout>
         <SEO title="Todo" />
-        {AddLoading || CheckLoading || DelLoading || UpdateLoading ?
+        {AddLoading || DelLoading || EditLoading ?
           <Load />
           :
           null}
@@ -136,7 +134,7 @@ const TaskBox= () => {
         </form>
         { data.todos && data.todos.map((info: Info, index: number) =>
           <List key={index} className={`${matches ? classes.rootQuery : classes.root} ${classes.list} ${islit ? classes.LightList : ''} `}>
-            <Task setCheckLoading={setCheckLoading} setDelLoading={setDelLoading} setUpdateLoading={setUpdateLoading} date={info.date} task={info.task} id={info.id} status={info.status} />
+            <Bookmark setDelLoading={setDelLoading} setEditLoading={setEditLoading} name={info.name} id={info.id} url={info.url} />
           </List>
         )
         }

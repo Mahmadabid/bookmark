@@ -4,7 +4,7 @@ import store from './src/Global/store';
 import { Theme } from "./src/Global/theme";
 import './src/Global/Global.css';
 import { ApolloProvider } from '@apollo/client';
-import { client } from "./src/Apollo/client";
+import { client } from "./src/apollo/client";
 import {Providers} from './netlifyIdentityContext';
 
 export const wrapRootElement = ({ element }) => {

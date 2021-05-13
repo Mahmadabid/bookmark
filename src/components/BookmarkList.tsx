@@ -76,13 +76,21 @@ const BookmarkList = () => {
   const [AddBookmark, { loading: AddLoading }] = useMutation(ADD_BOOKMARK);
   const [DelLoading, setDelLoading] = useState(false);
   const [EditLoading, setEditLoading] = useState(false);
-  const [Error, setError] = useState(false);
+  const [NameError, setNameError] = useState(false);
+  const [UrlError, setUrlError] = useState(false);
 
   const AddTask = (event: React.FormEvent) => {
     event.preventDefault();
-    if (Name === "" || Url === "") {
-      setError(true);
-    } else {
+    if (Name === "") {
+      setNameError(true);
+    }
+    if (Url === "") {
+      setUrlError(true);
+    }
+    // if (Name === "") {
+    //   setNameError(true);
+    // }
+     else {
       AddBookmark({
         variables: {
           name: Name,
@@ -131,8 +139,8 @@ const BookmarkList = () => {
           null}
         <form onSubmit={AddTask}>
           <div className="main">
-            <TextField className={classes.input} error={Error} helperText={Error ? 'Empty field!' : ' '} onChange={(e) => setName(e.target.value)} value={Name} id="outlined-basic" label="Add Name" variant="outlined" />
-            <TextField className={classes.input} error={Error} helperText={Error ? 'Empty field!' : ' '} onChange={(e) => setUrl(e.target.value)} value={Url} id="outlined-basic" label="Add Url" variant="outlined" />
+            <TextField className={classes.input} error={NameError} helperText={NameError ? 'Empty field!' : ' '} onChange={(e) => setName(e.target.value)} value={Name} id="outlined-basic" label="Add Name" variant="outlined" />
+            <TextField className={classes.input} error={UrlError} helperText={UrlError ? 'Empty field!' : ' '} onChange={(e) => setUrl(e.target.value)} value={Url} id="outlined-basic" label="Add Url" variant="outlined" />
             <br />
             <Button type="submit" className={`button ${classes.button}`} variant="contained" color="primary">ADD Bookmark</Button>
           </div>

@@ -15,7 +15,7 @@ const index = () => {
         <SEO title="Home" />
         <div>
           <h1>Welcome</h1>
-          <p>You must be logged in to create Bookmarkd.</p>
+          <p>You must be logged in to create Bookmarks.</p>
           <p>With bookmarks app you can save your bookmark at cloud.</p>
           <ul>
             <li>You can create.</li>

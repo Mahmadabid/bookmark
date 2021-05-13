@@ -66,7 +66,7 @@ interface Info {
   url: string
 }
 
-const TaskBox= () => {
+const BookmarkList= () => {
   const classes = useStyles();
   const { loading, error, data } = useQuery(GET_BOOKMARK);
   const islit = useSelector((state: State) => state.themes.value);
@@ -148,4 +148,4 @@ const TaskBox= () => {
   }
 }
 
-export default TaskBox;
+export default BookmarkList;

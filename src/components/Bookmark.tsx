@@ -15,6 +15,7 @@ import EditIcon from '@material-ui/icons/Edit';
 // import DialogTitle from '@material-ui/core/DialogTitle';
 // import { StringLiteralLike } from 'typescript';
 import LinkIcon from '@material-ui/icons/Link';
+import { GET_BOOKMARK } from './BookmarkList';
 
 interface BookmarkProps {
     name: string
@@ -69,7 +70,7 @@ const Bookmark: React.FC<BookmarkProps> = ({ setDelLoading, setEditLoading, name
             variables: {
                 id,
             },
-            // refetchQueries: [{ query: GET_TODO }],
+            refetchQueries: [{ query: GET_BOOKMARK }],
         });
     }
 
@@ -89,7 +90,7 @@ const Bookmark: React.FC<BookmarkProps> = ({ setDelLoading, setEditLoading, name
                     url: Url,
                     name: Name
                 },
-                // refetchQueries: [{ query: GET_TODO }],
+                refetchQueries: [{ query: GET_BOOKMARK }],
             });
         }
     }

@@ -86,7 +86,8 @@ const BookmarkList= () => {
         variables: {
           task: value
         },
-        // refetchQueries: [{ query: GET_TODO }]
+        refetchQueries: [{ query: GET_BOOKMARK }],
+        awaitRefetchQueries: true,
       })
       setValue('');
     }

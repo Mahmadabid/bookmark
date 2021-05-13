@@ -15,13 +15,13 @@ const index = () => {
         <SEO title="Home" />
         <div>
           <h1>Welcome</h1>
-          <p>You must be logged in to create Todos.</p>
-          <p>Todos keep track of your daily tasks.</p>
+          <p>You must be logged in to create Bookmarkd.</p>
+          <p>With bookmarks app you can save your bookmark at cloud.</p>
           <ul>
             <li>You can create.</li>
             <li>You can modify.</li>
             <li>You can delete.</li>
-            <li>You can check.</li>
+            <li>You can visit.</li>
           </ul>
           <LogInButton />
         </div>
@@ -34,7 +34,7 @@ const index = () => {
       <div style={{ display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
         <h1>Welcome {user.user_metadata.full_name}</h1>
         <Link to="/bookmark" style={{ textDecoration: 'none' }} >
-          <Button color="primary" variant="contained">Create Todo</Button>
+          <Button color="primary" variant="contained">Create Bookmark</Button>
         </Link>
       </div>
     </Layout>

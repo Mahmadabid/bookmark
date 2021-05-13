@@ -4,7 +4,7 @@ dotenv.config()
 
 module.exports = {
   siteMetadata: {
-    title: `Edit title in gatsby config`,
+    title: `BookMark App`,
     description: `Gatsby starter for typescript`,
     author: `@ahmad`,
   },

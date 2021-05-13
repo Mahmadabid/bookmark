@@ -71,7 +71,8 @@ const BookmarkList= () => {
   const { loading, error, data } = useQuery(GET_BOOKMARK);
   const islit = useSelector((state: State) => state.themes.value);
   const matches = useMediaQuery('(max-width:380px)');
-  const [value, setValue] = useState("");
+  const [Name, setName] = useState("");
+  const [Url, setUrl] = useState("");
   const [AddBookmark, { loading: AddLoading }] = useMutation(ADD_BOOKMARK);
   const [DelLoading, setDelLoading] = useState(false);
   const [EditLoading, setEditLoading] = useState(false);
@@ -79,17 +80,18 @@ const BookmarkList= () => {
 
   const AddTask = (event: React.FormEvent) => {
     event.preventDefault();
-    if (value === "") {
+    if (Name === "" || Url === "") {
       setError(true);
     } else {
       AddBookmark({
         variables: {
-          task: value
+          name: Name,
+          url: Url
         },
         refetchQueries: [{ query: GET_BOOKMARK }],
-        awaitRefetchQueries: true,
       })
-      setValue('');
+      setName('');
+      setUrl('');
     }
   }
 
@@ -129,8 +131,9 @@ const BookmarkList= () => {
           null}
         <form onSubmit={AddTask}>
           <div className="main">
-            <TextField className={classes.input} error={Error} helperText={Error ? 'Empty field!' : ' '} onChange={(e) => setValue(e.target.value)} value={value} id="outlined-basic" label="Add Task" variant="outlined" />
-            <Button type="submit" className={`button ${classes.button}`} variant="contained" color="primary">ADD TASK</Button>
+          <TextField className={classes.input} error={Error} helperText={Error ? 'Empty field!' : ' '} onChange={(e) => setName(e.target.value)} value={Name} id="outlined-basic" label="Add Name" variant="outlined" />
+          <TextField className={classes.input} error={Error} helperText={Error ? 'Empty field!' : ' '} onChange={(e) => setUrl(e.target.value)} value={Url} id="outlined-basic" label="Add Url" variant="outlined" />
+            <Button type="submit" className={`button ${classes.button}`} variant="contained" color="primary">ADD Bookmark</Button>
           </div>
         </form>
         { data.todos && data.todos.map((info: Info, index: number) =>

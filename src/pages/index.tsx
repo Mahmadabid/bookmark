@@ -1,22 +1,44 @@
-import * as React from "react"
-import Layout from "../components/layout"
-import SEO from "../components/seo"
+import React, { useContext } from 'react'
+import Layout from '../components/layout';
+import SEO from '../components/seo';
+import { IdentityContext } from "../../netlifyIdentityContext";
+import { Link } from 'gatsby';
+import { Button } from '@material-ui/core';
+import LogInButton from '../components/Login';
 
-const IndexPage = () => (
-  <Layout>
-    <SEO title="Home" />
-    <h1>Hi people</h1>
-    <p>Welcome to Gatsby starter.</p>
-    <p> It includes:</p>
-    <ul>
-      <li>Typescript</li>
-      <li>Material-ui</li>
-      <li>Redux toolkit</li>
-      <li>Dark Theme</li>
-      <li>dotenv</li>
-    </ul>
-    <p>In order to change the title, description and other details go to gatsby-config file and edit the title</p>
-  </Layout>
-)
+const index = () => {
+  const { user } = useContext(IdentityContext);
 
-export default IndexPage
+  if (!user) {
+    return (
+      <Layout>
+        <SEO title="Home" />
+        <div>
+          <h1>Welcome</h1>
+          <p>You must be logged in to create Todos.</p>
+          <p>Todos keep track of your daily tasks.</p>
+          <ul>
+            <li>You can create.</li>
+            <li>You can modify.</li>
+            <li>You can delete.</li>
+            <li>You can check.</li>
+          </ul>
+          <LogInButton />
+        </div>
+      </Layout>
+    )
+  }
+  return (
+    <Layout>
+      <SEO title="Home" />
+      <div style={{ display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
+        <h1>Welcome {user.user_metadata.full_name}</h1>
+        <Link to="/todo" style={{ textDecoration: 'none' }} >
+          <Button color="primary" variant="contained">Create Todo</Button>
+        </Link>
+      </div>
+    </Layout>
+  )
+}
+
+export default index;

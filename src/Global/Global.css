@@ -1,3 +1,43 @@
 body {
     overflow-x: hidden;
+    background-color: hsl(10,10%,98%);
+}
+
+.main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 30px;
+}
+
+h3, h1 {
+    text-align: center;
+}
+
+.loading {
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: rgba(110, 102, 102, 0.397);
+    width: 100vw;
+    height: 100vh;
+    z-index: 99;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+@media screen and (max-width: 500px) {
+    .main {
+        flex-direction: column;
+    }
+    .button {
+        margin-top: 10px !important;
+    }
+}
+
+@media screen and (min-width: 501px) {
+    .button {
+        margin-top: -25px !important;
+    }
 }

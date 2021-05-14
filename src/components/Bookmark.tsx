@@ -34,8 +34,8 @@ const DEL_BOOKMARK = gql`
 `;
 
 const EDIT_BOOKMARK = gql`
-    mutation editBookmark($id: ID!, $name: String!, $url: String!) {
-        editBookmark(id: $id, name: $name, url: $url) {
+    mutation editBookmark($name: String!, $url: String!, $id: ID!) {
+        editBookmark(name: $name, url: $url, id: $id) {
             id,
             name,
             url
@@ -87,6 +87,7 @@ const Bookmark: React.FC<BookmarkProps> = ({ setDelLoading, setEditLoading, name
 
     const EditBookmark = (Url: string, Name: string, event: any) => {
         event.preventDefault();
+        console.log(Url, 'name', Name);
         editBookmark({
             variables: {
                 id,

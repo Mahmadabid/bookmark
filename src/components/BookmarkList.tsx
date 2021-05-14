@@ -10,25 +10,26 @@ import { useSelector } from "react-redux";
 import { State } from "../Global/Types/SliceTypes";
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Bookmark from "./Bookmark";
-import { Formik, Field, Form, ErrorMessage } from 'formik';
+import { Formik, Field, Form } from 'formik';
 import * as Yup from "yup";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     input: {
-      width: '30ch',
+      width: '35ch',
+    },
+    resInput: {
+      width: '27ch',
     },
     button: {
       marginLeft: '15px',
     },
     root: {
       width: '100%',
-      minWidth: 380,
       backgroundColor: theme.palette.background.paper,
     },
     rootQuery: {
       width: '100%',
-      minWidth: 305,
       backgroundColor: theme.palette.background.paper,
     },
     list: {
@@ -37,10 +38,6 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     LightList: {
       backgroundColor: 'hsl(227deg 100% 97%)',
-    },
-    error: {
-      color: 'red',
-      fontSize: 'small',
     },
   }),
 );
@@ -80,9 +77,10 @@ const BookmarkList = () => {
   const islit = useSelector((state: State) => state.themes.value);
   const matches = useMediaQuery('(max-width:380px)');
   const [formValues, setFormValues] = useState(initialValues);
-  const [AddBookmark, { loading: AddLoading }] = useMutation(ADD_BOOKMARK);
+  const [addBookmark, { loading: AddLoading }] = useMutation(ADD_BOOKMARK);
   const [DelLoading, setDelLoading] = useState(false);
   const [EditLoading, setEditLoading] = useState(false);
+console.log(formValues);
 
   const schema = Yup.object({
     url: Yup.string()
@@ -97,7 +95,7 @@ const BookmarkList = () => {
 
   const AddTask = () => {
 
-    AddBookmark({
+    addBookmark({
       variables: {
         name: formValues.name,
         url: formValues.url
@@ -158,14 +156,12 @@ const BookmarkList = () => {
             }
           }
         >
-          {() => (
+          {(formik) => (
             <Form>
               <div className="main">
-                <Field className={classes.input} name="name" type="text" as={TextField} label="name" variant="outlined" />
-                <ErrorMessage className={classes.error} component="div" name="name" />
+                <Field helperText={formik.touched.name ? formik.errors.name : ""} error={formik.touched.name && Boolean(formik.errors.name)} className={matches? classes.resInput: classes.input} name="name" type="text" as={TextField} label="name" variant="outlined" />
                 <br />
-                <Field className={classes.input} name="url" type="text" as={TextField} label="url" variant="outlined" />
-                <ErrorMessage className={classes.error} component="div" name="url" />
+                <Field helperText={formik.touched.url ? formik.errors.url : ""} error={formik.touched.url && Boolean(formik.errors.url)} className={matches? classes.resInput: classes.input} name="url" type="text" as={TextField} label="url" variant="outlined" />
                 <br />
                 <br />
                 <Button type="submit" className={`button ${classes.button}`} variant="contained" color="primary">ADD Bookmark</Button>

@@ -1,21 +1,21 @@
-import React, { Dispatch, SetStateAction } from 'react';
+import React, { Dispatch, SetStateAction, useState } from 'react';
 import { IconButton, ListItem, ListItemText } from '@material-ui/core';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import { useMutation } from '@apollo/client';
 import gql from 'graphql-tag';
 import EditIcon from '@material-ui/icons/Edit';
-// import { GET_TODO } from './TaskBox';
-// import Button from '@material-ui/core/Button';
-// import TextField from '@material-ui/core/TextField';
-// import Dialog from '@material-ui/core/Dialog';
-// import DialogActions from '@material-ui/core/DialogActions';
-// import DialogContent from '@material-ui/core/DialogContent';
-// import DialogContentText from '@material-ui/core/DialogContentText';
-// import DialogTitle from '@material-ui/core/DialogTitle';
-// import { StringLiteralLike } from 'typescript';
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 import LinkIcon from '@material-ui/icons/Link';
 import { GET_BOOKMARK } from './BookmarkList';
+import { Formik, Field, Form, ErrorMessage } from 'formik';
+import * as Yup from "yup";
 
 interface BookmarkProps {
     name: string
@@ -45,17 +45,29 @@ const EDIT_BOOKMARK = gql`
 
 const Bookmark: React.FC<BookmarkProps> = ({ setDelLoading, setEditLoading, name, id, url }) => {
 
-    // const [open, setOpen] = useState(false);
-    // const [NameError, setNameError] = useState(false);
-    // const [UrlError, setUrlError] = useState(false);
+    const initialValues = { url, name };
+    const schema = Yup.object({
+        url: Yup.string()
+            .matches(
+                /((https?):\/\/)?(www.)?[a-z0-9]+(\.[a-z]{2,}){1,3}(#?\/?[a-zA-Z0-9#]+)*\/?(\?[a-zA-Z0-9-_]+=[a-zA-Z0-9-%]+&?)?$/,
+                'Enter correct url!'
+            )
+            .required('Please enter Url'),
 
-    // const handleClickOpen = () => {
-    //     setOpen(true);
-    // };
+        name: Yup.string()
+            .required('Name is Required'),
+    });
 
-    // const handleClose = () => {
-    //     setOpen(false);
-    // };
+    const [open, setOpen] = useState(false);
+    const [formValues, setFormValues] = useState(initialValues);
+
+    const handleClickOpen = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
 
     const [delBookmark, { loading: delloading }] = useMutation(DEL_BOOKMARK);
     const [editBookmark, { loading: editloading }] = useMutation(EDIT_BOOKMARK);
@@ -71,75 +83,68 @@ const Bookmark: React.FC<BookmarkProps> = ({ setDelLoading, setEditLoading, name
                 id,
             },
             refetchQueries: [{ query: GET_BOOKMARK }],
-            awaitRefetchQueries: true,
         });
     }
 
     const EditBookmark = () => {
-        const Name = prompt("Enter name");
-        if (Name === "") {
-            alert("Enter name");
-        }
-        const Url = prompt("Enter url");
-        if (Url === "") {
-            alert("Enter url");
-        }
-        else {
-            editBookmark({
-                variables: {
-                    id,
-                    url: Url,
-                    name: Name
-                },
-                refetchQueries: [{ query: GET_BOOKMARK }],
-                // awaitRefetchQueries: true,
-            });
-        }
+        editBookmark({
+            variables: {
+                id,
+                url: formValues.url,
+                name: formValues.name,
+            },
+            refetchQueries: [{ query: GET_BOOKMARK }],
+        });
+        setFormValues(initialValues);
     }
 
-    // const EditButton = () => {
-    //     return (
-    //         <div>
-    //             <EditIcon style={{ marginRight: '20px', cursor: 'pointer' }} onClick={handleClickOpen} />
-    //             <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
-    //                 <DialogTitle id="form-dialog-title">Edit</DialogTitle>
-    //                 <DialogContent>
-    //                     <DialogContentText>
-    //                         To change the name and url enter the values and edit
-    //                 </DialogContentText>
-    //                     <TextField
-    //                         autoFocus
-    //                         margin="dense"
-    //                         id="name"
-    //                         label="name"
-    //                         type="text"
-    //                         fullWidth
-    //                         onChange={(e) => setName(e.target.value)}
-    //                         error={NameError} helperText={NameError ? 'Empty field!' : ' '}
-    //                     />
-    //                     <TextField
-    //                         autoFocus
-    //                         margin="dense"
-    //                         id="url"
-    //                         label="url"
-    //                         type="url"
-    //                         fullWidth
-    //                         onChange={(e) => setUrl(e.target.value)}
-    //                         error={UrlError} helperText={UrlError ? 'Empty field!' : ' '}
-    //                     />
-    //                 </DialogContent>
-    //                 <DialogActions>
-    //                     <Button onClick={handleClose} color="primary">
-    //                         Cancel
-    //                     </Button>
-    //                     <Button onClick={EditBookmark} color="primary">
-    //                         Edit
-    //                     </Button>
-    //                 </DialogActions>
-    //             </Dialog>
-    //         </div>
-    //     )
-    // }
+    const EditButton = () => {
+        return (
+            <div>
+                <EditIcon style={{ marginRight: '20px', cursor: 'pointer' }} onClick={handleClickOpen} />
+                <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+                    <DialogTitle style={{color: 'blueviolet' }}><span style={{ fontWeight: "bolder" }}>Edit</span></DialogTitle>
+                    <DialogContent>
+                        <DialogContentText>
+                            To change the name and url enter the values and edit
+                        </DialogContentText>
+                        <Formik
+                            initialValues={
+                                initialValues
+                            }
+                            validationSchema={
+                                schema
+                            }
+                            onSubmit={
+                                (values) => {
+                                    setFormValues({ ...values });
+                                    EditBookmark();
+                                    handleClose();
+                                }
+                            }
+                        >
+                            {(formik) => (
+                                <Form>
+                                    <Field error={formik.touched.name && Boolean(formik.errors.name)} fullWidth name="name" type="text" as={TextField} label="name" variant="outlined" />
+                                    <ErrorMessage className="error" component="div" name="name" />
+                                    <Field style={{marginTop: '10px'}} className="input" error={formik.touched.url && Boolean(formik.errors.url)} fullWidth name="url" type="text" as={TextField} label="url" variant="outlined" />
+                                    <ErrorMessage className="error" component="div" name="url" />
+                                    <DialogActions>
+                                        <Button type="button" onClick={handleClose} color="primary">
+                                            Cancel
+                                        </Button>
+                                        <Button type="submit" color="primary">
+                                            Edit
+                                        </Button>
+                                    </DialogActions>
+                                </Form>
+                            )}
+                        </Formik>
+                    </DialogContent>
+                </Dialog>
+            </div>
+        )
+    }
 
     return (
         <ListItem>
@@ -149,8 +154,7 @@ const Bookmark: React.FC<BookmarkProps> = ({ setDelLoading, setEditLoading, name
                 </IconButton>
             </a>
             <ListItemText primary={name} secondary={url} />
-            {/* <EditButton /> */}
-                <EditIcon style={{ marginRight: '20px', cursor: 'pointer' }} onClick={EditBookmark} />
+            <EditButton />
             <FormControlLabel
                 control={
                     <Checkbox

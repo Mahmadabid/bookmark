@@ -16,7 +16,7 @@ type Bookmark {
 }
 type Mutation{
   addBookmark(name: String!, url: String!): Bookmark
-  editBookmark(name: String!, url: String!): Bookmark
+  editBookmark(id: ID!, name: String!, url: String!): Bookmark
   delBookmark(id: ID!): Bookmark
 }
 `
@@ -41,6 +41,15 @@ const resolvers = {
     },
   },
   Mutation: {
+    delBookmark: async (_, { id }, { user }) => {
+      if (!user) {
+        throw new Error("You are not authorized;")
+      }
+      const results = await client.query(
+        q.Delete(q.Ref(q.Collection('bookmark'), id))
+      )
+    },
+
     addBookmark: async (_, { name, url }, { user }) => {
       if (!user) {
         return "You are not authorized"
@@ -58,15 +67,6 @@ const resolvers = {
         ...results.data,
         id: results.ref.id,
       };
-    },
-
-    delBookmark: async (_, { id }, { user }) => {
-      if (!user) {
-        throw new Error("Must be authenticated to delete bookmarks");
-      }
-      const results = await client.query(
-        q.Delete(q.Ref(q.Collection("bookmark"), id))
-      );
     },
 
     editBookmark: async (_, { id, url, name }, { user }) => {

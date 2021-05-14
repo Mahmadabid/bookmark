@@ -1,7 +1,3 @@
-const dotenv = require("dotenv");
-
-dotenv.config()
-
 module.exports = {
   siteMetadata: {
     title: `BookMark App`,
@@ -12,6 +8,10 @@ module.exports = {
     `gatsby-plugin-react-helmet`,
     `gatsby-plugin-material-ui`,
     `gatsby-plugin-image`,
+    {
+      resolve: "gatsby-plugin-create-client-paths",
+      options: { prefixes: [`/bookmark/*`] },
+    },
     {
       resolve: `gatsby-source-filesystem`,
       options: {

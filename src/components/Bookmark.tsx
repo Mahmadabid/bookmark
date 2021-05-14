@@ -92,7 +92,7 @@ const Bookmark: React.FC<BookmarkProps> = ({ setDelLoading, setEditLoading, name
                     name: Name
                 },
                 refetchQueries: [{ query: GET_BOOKMARK }],
-                awaitRefetchQueries: true,
+                // awaitRefetchQueries: true,
             });
         }
     }

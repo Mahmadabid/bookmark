@@ -10,6 +10,8 @@ import { useSelector } from "react-redux";
 import { State } from "../Global/Types/SliceTypes";
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Bookmark from "./Bookmark";
+import { Formik, Field, Form, ErrorMessage } from 'formik';
+import * as Yup from "yup";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -35,6 +37,10 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     LightList: {
       backgroundColor: 'hsl(227deg 100% 97%)',
+    },
+    error: {
+      color: 'red',
+      fontSize: 'small',
     },
   }),
 );
@@ -67,40 +73,39 @@ interface Info {
 }
 
 const BookmarkList = () => {
+  const initialValues = { url: "", name: "" };
+
   const classes = useStyles();
   const { loading, error, data } = useQuery(GET_BOOKMARK);
   const islit = useSelector((state: State) => state.themes.value);
   const matches = useMediaQuery('(max-width:380px)');
-  const [Name, setName] = useState("");
-  const [Url, setUrl] = useState("");
+  const [formValues, setFormValues] = useState(initialValues);
   const [AddBookmark, { loading: AddLoading }] = useMutation(ADD_BOOKMARK);
   const [DelLoading, setDelLoading] = useState(false);
   const [EditLoading, setEditLoading] = useState(false);
-  const [NameError, setNameError] = useState(false);
-  const [UrlError, setUrlError] = useState(false);
 
-  const AddTask = (event: React.FormEvent) => {
-    event.preventDefault();
-    if (Name === "") {
-      setNameError(true);
-    }
-    if (Url === "") {
-      setUrlError(true);
-    }
-    // if (Name === "") {
-    //   setNameError(true);
-    // }
-     else {
-      AddBookmark({
-        variables: {
-          name: Name,
-          url: Url
-        },
-        refetchQueries: [{ query: GET_BOOKMARK }],
-      })
-      setName('');
-      setUrl('');
-    }
+  const schema = Yup.object({
+    url: Yup.string()
+      .matches(
+        /((https?):\/\/)?(www.)?[a-z0-9]+(\.[a-z]{2,}){1,3}(#?\/?[a-zA-Z0-9#]+)*\/?(\?[a-zA-Z0-9-_]+=[a-zA-Z0-9-%]+&?)?$/,
+        'Enter correct url!'
+      )
+      .required('Please enter Url'),
+    name: Yup.string()
+      .required('Name is Required'),
+  });
+
+  const AddTask = () => {
+
+    AddBookmark({
+      variables: {
+        name: formValues.name,
+        url: formValues.url
+      },
+      refetchQueries: [{ query: GET_BOOKMARK }],
+    })
+
+    setFormValues(initialValues)
   }
 
   if (loading) {
@@ -113,6 +118,7 @@ const BookmarkList = () => {
   }
 
   if (error) {
+
     return (
       <Layout>
         <SEO title="Todo" />
@@ -130,6 +136,7 @@ const BookmarkList = () => {
   }
 
   if (data) {
+
     return (
       <Layout>
         <SEO title="Todo" />
@@ -137,15 +144,36 @@ const BookmarkList = () => {
           <Load />
           :
           null}
-        <form onSubmit={AddTask}>
-          <div className="main">
-            <TextField className={classes.input} error={NameError} helperText={NameError ? 'Empty field!' : ' '} onChange={(e) => setName(e.target.value)} value={Name} id="outlined-basic" label="Add Name" variant="outlined" />
-            <TextField className={classes.input} error={UrlError} helperText={UrlError ? 'Empty field!' : ' '} onChange={(e) => setUrl(e.target.value)} value={Url} id="outlined-basic" label="Add Url" variant="outlined" />
-            <br />
-            <Button type="submit" className={`button ${classes.button}`} variant="contained" color="primary">ADD Bookmark</Button>
-          </div>
-        </form>
-        { data.todos && data.todos.map((info: Info, index: number) =>
+        <Formik
+          initialValues={
+            initialValues
+          }
+          validationSchema={
+            schema
+          }
+          onSubmit={
+            (values) => {
+              setFormValues({ ...values });
+              AddTask()
+            }
+          }
+        >
+          {() => (
+            <Form>
+              <div className="main">
+                <Field className={classes.input} name="name" type="text" as={TextField} label="name" variant="outlined" />
+                <ErrorMessage className={classes.error} component="div" name="name" />
+                <br />
+                <Field className={classes.input} name="url" type="text" as={TextField} label="url" variant="outlined" />
+                <ErrorMessage className={classes.error} component="div" name="url" />
+                <br />
+                <br />
+                <Button type="submit" className={`button ${classes.button}`} variant="contained" color="primary">ADD Bookmark</Button>
+              </div>
+            </Form>
+          )}
+        </Formik>
+        { data.bookmarks && data.bookmarks.map((info: Info, index: number) =>
           <List key={index} className={`${matches ? classes.rootQuery : classes.root} ${classes.list} ${islit ? classes.LightList : ''} `}>
             <Bookmark setDelLoading={setDelLoading} setEditLoading={setEditLoading} name={info.name} id={info.id} url={info.url} />
           </List>

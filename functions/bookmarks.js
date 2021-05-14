@@ -3,7 +3,7 @@ const faunadb = require("faunadb");
 const q = faunadb.query;
 require("dotenv").config();
 
-const client = new faunadb.Client({ secret: process.env.FAUNADB_SECRET });
+const client = new faunadb.Client({ secret: "fnAEJIBgpeACCNoxhR4xaOPoLsCS0RaBD2dQGsNH" });
 
 const typeDefs = gql`
 type Query {
@@ -86,8 +86,8 @@ const resolvers = {
         id: results.ref.id,
       };
     },
-  }
-}
+  },
+};
 
 const server = new ApolloServer({
   typeDefs,
@@ -99,8 +99,10 @@ const server = new ApolloServer({
       return {};
     }
   },
-})
-
-const handler = server.createHandler()
-
-module.exports = { handler }
+});
+exports.handler = server.createHandler({
+  cors: {
+    origin: "*",
+    credentials: true,
+  },
+});

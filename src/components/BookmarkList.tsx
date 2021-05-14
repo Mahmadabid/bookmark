@@ -80,7 +80,6 @@ const BookmarkList = () => {
   const [addBookmark, { loading: AddLoading }] = useMutation(ADD_BOOKMARK);
   const [DelLoading, setDelLoading] = useState(false);
   const [EditLoading, setEditLoading] = useState(false);
-console.log(formValues);
 
   const schema = Yup.object({
     url: Yup.string()
@@ -152,7 +151,9 @@ console.log(formValues);
           onSubmit={
             (values) => {
               setFormValues({ ...values });
+console.log(formValues);
               AddTask()
+console.log(formValues);
             }
           }
         >

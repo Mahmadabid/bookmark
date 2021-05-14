@@ -1,34 +1,25 @@
-const React = require("react");
-const {setContext} = require('apollo-link-context');
-const netlifyIdentity = require("netlify-identity-widget");
-const fetch = require('cross-fetch');
+import fetch from "cross-fetch";
+import { ApolloClient, HttpLink, InMemoryCache } from "@apollo/client";
+import netlifyIdentity from "netlify-identity-widget";
+import { setContext } from "apollo-link-context";
 
-const {
-  ApolloClient,
-  HttpLink,
-  InMemoryCache,
-} = require("@apollo/client");
-
-const authLink = setContext((_, {headers}) => {
+const authLink = setContext((_, { headers }) => {
   const user = netlifyIdentity.currentUser();
-
-  const token =  user.token.access_token;
+  const token = user.token.access_token;
 
   return {
     headers: {
       ...headers,
-      Authorization: token ? `Bearer ${token}`: ''
-    }
-  }
-})
-
+      Authorization: token ? `Bearer ${token}` : "",
+    },
+  };
+});
 const httpLink = new HttpLink({
-  // uri: "/.netlify/functions/todolist"
-  uri: "/.netlify/functions/bookmarks",
-  fetch
+  uri: "/.netlify/functions/bookmark",
+  fetch,
 });
 
 export const client = new ApolloClient({
+  link: authLink.concat(httpLink),
   cache: new InMemoryCache(),
-  link: authLink.concat(httpLink)
-})
+});

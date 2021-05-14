@@ -43,7 +43,6 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 
-// This query is executed at run time by Apollo.
 export const GET_BOOKMARK = gql`
 {
   bookmarks {
@@ -76,7 +75,6 @@ const BookmarkList = () => {
   const { loading, error, data } = useQuery(GET_BOOKMARK);
   const islit = useSelector((state: State) => state.themes.value);
   const matches = useMediaQuery('(max-width:380px)');
-  const [formValues, setFormValues] = useState(initialValues);
   const [addBookmark, { loading: AddLoading }] = useMutation(ADD_BOOKMARK);
   const [DelLoading, setDelLoading] = useState(false);
   const [EditLoading, setEditLoading] = useState(false);
@@ -84,7 +82,7 @@ const BookmarkList = () => {
   const schema = Yup.object({
     url: Yup.string()
       .matches(
-        /((https?):\/\/)?(www.)?[a-z0-9]+(\.[a-z]{2,}){1,3}(#?\/?[a-zA-Z0-9#]+)*\/?(\?[a-zA-Z0-9-_]+=[a-zA-Z0-9-%]+&?)?$/,
+       /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)/,
         'Enter correct url!'
       )
       .required('Please enter Url'),
@@ -92,17 +90,15 @@ const BookmarkList = () => {
       .required('Name is Required'),
   });
 
-  const AddTask = () => {
-
+  const AddTask = (name: string, url: string, event: any) => {
+    event.preventDefault();
     addBookmark({
       variables: {
-        name: formValues.name,
-        url: formValues.url
+        name: name,
+        url: url
       },
       refetchQueries: [{ query: GET_BOOKMARK }],
     })
-
-    setFormValues(initialValues)
   }
 
   if (loading) {
@@ -149,11 +145,11 @@ const BookmarkList = () => {
             schema
           }
           onSubmit={
-            (values) => {
-              setFormValues({ ...values });
-console.log(formValues);
-              AddTask()
-console.log(formValues);
+            (values, actions) => {
+              AddTask(values.name, values.url, event);
+              actions.resetForm({
+                values: { name: "", url: "" },
+              });
             }
           }
         >

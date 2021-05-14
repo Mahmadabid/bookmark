@@ -59,7 +59,6 @@ const Bookmark: React.FC<BookmarkProps> = ({ setDelLoading, setEditLoading, name
     });
 
     const [open, setOpen] = useState(false);
-    const [formValues, setFormValues] = useState(initialValues);
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -86,16 +85,16 @@ const Bookmark: React.FC<BookmarkProps> = ({ setDelLoading, setEditLoading, name
         });
     }
 
-    const EditBookmark = () => {
+    const EditBookmark = (Url: string, Name: string, event: any) => {
+        event.preventDefault();
         editBookmark({
             variables: {
                 id,
-                url: formValues.url,
-                name: formValues.name,
+                url: Url,
+                name: Name,
             },
             refetchQueries: [{ query: GET_BOOKMARK }],
         });
-        setFormValues(initialValues);
     }
 
     const EditButton = () => {
@@ -116,9 +115,11 @@ const Bookmark: React.FC<BookmarkProps> = ({ setDelLoading, setEditLoading, name
                                 schema
                             }
                             onSubmit={
-                                (values) => {
-                                    setFormValues({ ...values });
-                                    EditBookmark();
+                                (values, {resetForm}) => {
+                                    EditBookmark(values.url, values.name, event);
+                                    resetForm({
+                                        values: {url, name}
+                                    })
                                     handleClose();
                                 }
                             }

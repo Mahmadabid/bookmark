@@ -3,7 +3,7 @@ const faunadb = require("faunadb");
 const q = faunadb.query;
 require("dotenv").config();
 
-const client = new faunadb.Client({ secret: "fnAEJIBgpeACCNoxhR4xaOPoLsCS0RaBD2dQGsNH" });
+const client = new faunadb.Client({ secret: process.env.FAUNADB_SECRET });
 
 const typeDefs = gql`
 type Query {

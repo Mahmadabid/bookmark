@@ -125,7 +125,7 @@ const Header = ({ siteTitle }: HeaderProps) => {
                 onClose={handleClose}
               >
                 <StyledMenuItem>
-                  <Link to="/bookmark" style={{textDecoration: "none", color: islit? 'rgb(230, 59, 25)': 'white'}}>
+                  <Link to="/bookmark" style={{textDecoration: "none"}}>
                     <ListItemText primary="DashBoard" />
                   </Link>
                 </StyledMenuItem>
@@ -136,7 +136,7 @@ const Header = ({ siteTitle }: HeaderProps) => {
             </>
             :
             <>
-              <Link to="/bookmark" style={{textDecoration: "none", color: islit? 'rgb(230, 59, 25)': 'white'}}>
+              <Link to="/bookmark" style={{textDecoration: "none"}}>
                 <Button className={classes.Button}>DashBoard</Button>
               </Link>
               <Button className={classes.Button} onClick={() => { netlifyIdentity.open() }}>{user ? user.user_metadata && user.user_metadata.full_name : "LogIn"}</Button>

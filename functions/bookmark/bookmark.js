@@ -1,116 +1,90 @@
-require("dotenv").config();
+const { ApolloServer, gql } = require("apollo-server-lambda");
 const faunadb = require("faunadb");
 const q = faunadb.query;
+require("dotenv").config();
 
-const { ApolloServer, gql } = require("apollo-server-lambda");
+const client = new faunadb.Client({ secret: process.env.FAUNADB_SECRET });
 
 const typeDefs = gql`
-  type Query {
-    bookmarks: [Bookmark!]
-  }
-  type Mutation {
-    addBookmark(name: String!, url: String!): Bookmark
-    editBookmark(name: String!, url: String!, id: ID!): Bookmark
-    delBookmark(id: ID!): Bookmark
-  }
-  type Bookmark {
-    id: ID!
-    name: String!
-    url: String!
-    owner: String!
-  }
-`;
+type Query {
+  bookmarks: [Bookmark!]
+}
+type Bookmark {
+  id: ID!
+  name: String!
+  url: String!
+}
+type Mutation{
+  addBookmark(name: String!, url: String!): Bookmark
+  editBookmark(id: ID!, name: String!, url: String!): Bookmark
+  delBookmark(id: ID!): Bookmark
+}
+`
 
 const resolvers = {
   Query: {
     bookmarks: async (parent, args, { user }) => {
-      try {
-        if (!user) return [];
-        else {
-          if (process.env.FAUNADB_SECRET) {
-            var client = new faunadb.Client({
-              secret: process.env.FAUNADB_SECRET,
-            });
-
-            const result = await client.query(
-              q.Paginate(q.Match(q.Index("user_bookmark"), user))
-            );
-            return result.data.map(([ref, name, url]) => {
-              return {
-                id: ref.id,
-                name: name,
-                url: url,
-              };
-            });
-          }
-        }
-      } catch (error) {
-        console.log(error);
+      if (!user) {
+        return [];
+      } else {
+        const results = await client.query(
+          q.Paginate(q.Match(q.Index("user_bookmark"), user))
+        );
+        return results.data.map(([ref, name, url]) => {
+          return {
+            id: ref.id,
+            name,
+            url,
+          };
+        });
       }
     },
   },
   Mutation: {
-    editBookmark: async (_, { name, url, id }, { user }) => {
-      if (!user) throw new Error("Must be authenticated to edit");
-      try {
-        var client = new faunadb.Client({
-          secret: process.env.FAUNADB_SECRET,
-        });
-
-        const result = await client.query(
-          q.Update(q.Ref(q.Collection("bookmark"), id), {
-            data: {
-              name: name,
-              url: url,
-            },
-          })
-        );
-
-      } catch (err) {
-        console.log(err);
-      }
-    },
     delBookmark: async (_, { id }, { user }) => {
-      if (!user) throw new Error("Must be authenticated to edit");
-      try {
-        var client = new faunadb.Client({
-          secret: process.env.FAUNADB_SECRET,
-        });
-
-        const result = await client.query(
-          q.Delete(q.Ref(q.Collection("bookmark"), id))
-        );
-
-      } catch (err) {
-        console.log(err);
+      if (!user) {
+        throw new Error("You are not authorized;")
       }
+      const results = await client.query(
+        q.Delete(q.Ref(q.Collection('bookmark'), id))
+      )
     },
+
     addBookmark: async (_, { name, url }, { user }) => {
       if (!user) {
-        throw new Error("Must be authenticated to insert todos");
+        return "You are not authorized"
       }
-      try {
-        var client = new faunadb.Client({
-          secret: process.env.FAUNADB_SECRET,
-        });
+      const results = await client.query(
+        q.Create(q.Collection("bookmark"), {
+          data: {
+            name,
+            owner: user,
+            url,
+          },
+        })
+      );
+      return {
+        ...results.data,
+        id: results.ref.id,
+      };
+    },
 
-        const result = await client.query(
-          q.Create(q.Collection("bookmark"), {
-            data: {
-              name: name,
-              url: url,
-              owner: user,
-            },
-          })
-        );
-
-        return {
-          name: result.data.name,
-          url: result.data.url,
-        };
-      } catch (err) {
-        console.log(err);
+    editBookmark: async (_, { id, url, name }, { user }) => {
+      if (!user) {
+        throw new Error("Must be authenticated to add bookmarks");
       }
+      const results = await client.query(
+        q.Update(q.Ref(q.Collection("bookmark"), id), {
+          data: {
+            name,
+            url,
+          },
+        })
+      );
+      return {
+        ...results.data,
+        id: results.ref.id,
+      };
     },
   },
 };
@@ -126,7 +100,4 @@ const server = new ApolloServer({
     }
   },
 });
-
-const handler = server.createHandler();
-
-module.exports = { handler };
+exports.handler = server.createHandler();

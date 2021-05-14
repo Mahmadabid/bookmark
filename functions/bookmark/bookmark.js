@@ -23,7 +23,7 @@ const typeDefs = gql`
 
 const resolvers = {
   Query: {
-    getBookmarks: async (parent, args, { user }) => {
+    bookmarks: async (parent, args, { user }) => {
       try {
         if (!user) return [];
         else {
@@ -33,18 +33,13 @@ const resolvers = {
             });
 
             const result = await client.query(
-              q.Map(
-                q.Paginate(q.Match(q.Index("bookmark_by_owner"), user)),
-                q.Lambda((x) => q.Get(x))
-              )
+              q.Paginate(q.Match(q.Index("user_bookmark"), user))
             );
-            console.log(result);
-            return result.data.map((bookmark) => {
-              console.log(bookmark.ref.id);
+            return result.data.map(([ref, name, url]) => {
               return {
-                id: bookmark.ref.id,
-                name: bookmark.data.name,
-                url: bookmark.data.url,
+                id: ref.id,
+                name: name,
+                url: url,
               };
             });
           }
@@ -71,7 +66,6 @@ const resolvers = {
           })
         );
 
-        console.log(result);
       } catch (err) {
         console.log(err);
       }
@@ -87,11 +81,6 @@ const resolvers = {
           q.Delete(q.Ref(q.Collection("bookmark"), id))
         );
 
-        console.log(result);
-        return {
-          name: result.data.name,
-          url: result.data.url,
-        };
       } catch (err) {
         console.log(err);
       }
@@ -115,7 +104,6 @@ const resolvers = {
           })
         );
 
-        console.log(result);
         return {
           name: result.data.name,
           url: result.data.url,

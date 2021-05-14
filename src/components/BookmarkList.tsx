@@ -54,9 +54,9 @@ export const GET_BOOKMARK = gql`
 `;
 
 const ADD_BOOKMARK = gql`
-  mutation addBookmark($name: String!, $url: String) {
+  mutation($name: String!, $url: String!) {
     addBookmark(name: $name, url: $url) {
-      name,
+      name
       url
     }
   }
@@ -90,14 +90,14 @@ const BookmarkList = () => {
       .required('Name is Required'),
   });
 
-  const AddTask = (name: string, url: string, event: any) => {
-    event.preventDefault();
+  const AddTask = (name: string, url: string) => {
     addBookmark({
       variables: {
         name: name,
         url: url
       },
       refetchQueries: [{ query: GET_BOOKMARK }],
+      awaitRefetchQueries: true,
     })
   }
 
@@ -145,11 +145,11 @@ const BookmarkList = () => {
             schema
           }
           onSubmit={
-            (values, actions) => {
-              AddTask(values.name, values.url, event);
-              actions.resetForm({
-                values: { name: "", url: "" },
-              });
+            (values, {resetForm}) => {
+              resetForm({
+                values: initialValues
+              })
+              AddTask(values.name, values.url);
             }
           }
         >

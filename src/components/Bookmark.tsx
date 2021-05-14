@@ -36,8 +36,8 @@ const DEL_BOOKMARK = gql`
 const EDIT_BOOKMARK = gql`
     mutation editBookmark($name: String!, $url: String!, $id: ID!) {
         editBookmark(name: $name, url: $url, id: $id) {
-            id,
-            name,
+            id
+            name
             url
         }
     }
@@ -49,7 +49,7 @@ const Bookmark: React.FC<BookmarkProps> = ({ setDelLoading, setEditLoading, name
     const schema = Yup.object({
         url: Yup.string()
             .matches(
-                /((https?):\/\/)?(www.)?[a-z0-9]+(\.[a-z]{2,}){1,3}(#?\/?[a-zA-Z0-9#]+)*\/?(\?[a-zA-Z0-9-_]+=[a-zA-Z0-9-%]+&?)?$/,
+                /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)/,
                 'Enter correct url!'
             )
             .required('Please enter Url'),
@@ -82,12 +82,11 @@ const Bookmark: React.FC<BookmarkProps> = ({ setDelLoading, setEditLoading, name
                 id,
             },
             refetchQueries: [{ query: GET_BOOKMARK }],
+            awaitRefetchQueries: true,
         });
     }
 
-    const EditBookmark = (Url: string, Name: string, event: any) => {
-        event.preventDefault();
-        console.log(Url, 'name', Name);
+    const EditBookmark = (Url: string, Name: string) => {
         editBookmark({
             variables: {
                 id,
@@ -95,6 +94,7 @@ const Bookmark: React.FC<BookmarkProps> = ({ setDelLoading, setEditLoading, name
                 name: Name,
             },
             refetchQueries: [{ query: GET_BOOKMARK }],
+            awaitRefetchQueries: true,
         });
     }
 
@@ -103,7 +103,7 @@ const Bookmark: React.FC<BookmarkProps> = ({ setDelLoading, setEditLoading, name
             <div>
                 <EditIcon style={{ marginRight: '20px', cursor: 'pointer' }} onClick={handleClickOpen} />
                 <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
-                    <DialogTitle style={{color: 'blueviolet' }}><span style={{ fontWeight: "bolder" }}>Edit</span></DialogTitle>
+                    <DialogTitle style={{ color: 'blueviolet' }}><span style={{ fontWeight: "bolder" }}>Edit</span></DialogTitle>
                     <DialogContent>
                         <DialogContentText>
                             To change the name and url enter the values and edit
@@ -116,11 +116,8 @@ const Bookmark: React.FC<BookmarkProps> = ({ setDelLoading, setEditLoading, name
                                 schema
                             }
                             onSubmit={
-                                (values, {resetForm}) => {
-                                    EditBookmark(values.url, values.name, event);
-                                    resetForm({
-                                        values: {url, name}
-                                    })
+                                (values) => {
+                                    EditBookmark(values.url, values.name);
                                     handleClose();
                                 }
                             }
@@ -129,7 +126,7 @@ const Bookmark: React.FC<BookmarkProps> = ({ setDelLoading, setEditLoading, name
                                 <Form>
                                     <Field error={formik.touched.name && Boolean(formik.errors.name)} fullWidth name="name" type="text" as={TextField} label="name" variant="outlined" />
                                     <ErrorMessage className="error" component="div" name="name" />
-                                    <Field style={{marginTop: '10px'}} className="input" error={formik.touched.url && Boolean(formik.errors.url)} fullWidth name="url" type="text" as={TextField} label="url" variant="outlined" />
+                                    <Field style={{ marginTop: '10px' }} className="input" error={formik.touched.url && Boolean(formik.errors.url)} fullWidth name="url" type="text" as={TextField} label="url" variant="outlined" />
                                     <ErrorMessage className="error" component="div" name="url" />
                                     <DialogActions>
                                         <Button type="button" onClick={handleClose} color="primary">
